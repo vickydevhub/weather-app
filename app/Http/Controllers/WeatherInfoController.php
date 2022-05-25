@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\WeatherData;
 
+use Illuminate\Support\Facades\Validator;
+
 class WeatherInfoController extends Controller
 {
     /**
@@ -30,11 +32,11 @@ class WeatherInfoController extends Controller
         $data = $data->get();
         if($data && count($data) > 0){
             return response()
-                        ->json($data, 200)
+                        ->json(['response'=> true,'data'=>$data], 200)
                         ->header('Content-Type', 'application/json');
         }else{
             return response()
-                        ->json(['No record found'], 204)
+                        ->json(['response'=>false,'data'=>[]], 204)
                         ->header('Content-Type', 'application/json');
         }
 
@@ -58,7 +60,38 @@ class WeatherInfoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'location_name' => 'required',
+            'lat' => 'required',
+            'lon'=> 'required',
+            'weather_main'=> 'required',
+            'weather_description'=> 'required',
+            'weather_id'=> 'required',
+            'temp'=> 'required',
+            'feels_like'=> 'required',
+            'temp_min'=> 'required',
+            'temp_max'=> 'required',
+            'pressure'=> 'required',
+            'humidity'=> 'required',
+            'visibility'=> 'required',
+            'wind_speed'=> 'required',
+            'wind_deg'=> 'required',
+            'datetime'=> 'required',
+            'sunrise'=> 'required',
+            'sunset'=> 'required',
+         ]);
+
+        if($validator->fails()){
+            return response()->json($validator->messages(), 200);
+        }
+
+        $input = $request->all();
+
+        WeatherData::updateOrCreate(['weather_id' => $input['weather_id']], $input);
+
+        return response()
+                        ->json(['response'=> true,'data'=>'Weather information stored successfully'], 200)
+                        ->header('Content-Type', 'application/json');
     }
 
     /**
@@ -72,7 +105,7 @@ class WeatherInfoController extends Controller
         // get the WeatherData
         $response = WeatherData::find($id);
         return response()
-                ->json($response, 200)
+                ->json(['response'=> true,'data'=>$response], 200)
                 ->header('Content-Type', 'application/json');
     }
 
@@ -100,7 +133,48 @@ class WeatherInfoController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $data = WeatherData::find($id);
+        if($data){
+            $validator = Validator::make($request->all(), [
+                'location_name' => 'required',
+                'lat' => 'required',
+                'lon'=> 'required',
+                'weather_main'=> 'required',
+                'weather_description'=> 'required',
+                'weather_id'=> 'required',
+                'temp'=> 'required',
+                'feels_like'=> 'required',
+                'temp_min'=> 'required',
+                'temp_max'=> 'required',
+                'pressure'=> 'required',
+                'humidity'=> 'required',
+                'visibility'=> 'required',
+                'wind_speed'=> 'required',
+                'wind_deg'=> 'required',
+                'datetime'=> 'required',
+                'sunrise'=> 'required',
+                'sunset'=> 'required',
+             ]);
+
+            if($validator->fails()){
+                return response()->json($validator->messages(), 200);
+            }
+
+            $input = $request->all();
+
+            $data->fill($input);
+
+            $data->save();
+
+            return response()
+                    ->json(['response'=>true,'data'=>['Weather data successfully updated']], 200)
+                    ->header('Content-Type', 'application/json');
+
+        }else{
+            return response()
+                    ->json(['response'=>false,'data'=>[]], 204)
+                    ->header('Content-Type', 'application/json');
+        }
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Events\WeatherDataProcessed;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -36,7 +37,9 @@ class ProcessWeatherData implements ShouldQueue
     {
         try {
             $request = $this->data;
-            WeatherData::updateOrCreate(['weather_id' => $request['weather_id']], $request);
+            $res = WeatherData::updateOrCreate(['weather_id' => $request['weather_id']], $request);
+
+            event (new WeatherDataProcessed($res));
 
         } catch (\Throwable $th) {
 

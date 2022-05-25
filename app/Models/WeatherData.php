@@ -50,4 +50,5 @@ class WeatherData extends Model
         $this->attributes['sunset'] = date('Y-m-d H:i:s',$value);
     }
 
+
 }

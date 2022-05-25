@@ -18,7 +18,7 @@ class CronController extends Controller
         $cities = array('New York','London','Paris','Berlin','Tokyo');
         foreach($cities as $city)
         {
-            $url = 'https://api.openweathermap.org/data/2.5/weather?q=London&appid=';
+            $url = 'https://api.openweathermap.org/data/2.5/weather';
             $params = array('q' => $city, 'appid'=> env('WEATHER_API_KEY') );
             $response = Http::get($url, $params);
             if($response->status())
@@ -37,8 +37,8 @@ class CronController extends Controller
                         ),
                     true);
                     //add job to queue
-                    ProcessWeatherData::dispatch($result)
-                                 ->delay(now()->addMinutes(3));
+                    ProcessWeatherData::dispatch($result);
+                                 //->delay(now()->addMinutes(3));
 
                 }else{
                     Log::channel('weather')->error($data['message']);

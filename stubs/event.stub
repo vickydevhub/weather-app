@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Events;
+namespace {{ namespace }};
 
-use App\Models\WeatherData;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -11,20 +10,18 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class WeatherDataProcessed
+class {{ class }}
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $weather_data;
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct(WeatherData $data)
+    public function __construct()
     {
-
-        $this->weather_data = $data->location_name;
+        //
     }
 
     /**
@@ -34,6 +31,6 @@ class WeatherDataProcessed
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('channel-weather');
+        return new PrivateChannel('channel-name');
     }
 }
