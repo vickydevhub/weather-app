@@ -37,8 +37,20 @@ class ProcessWeatherData implements ShouldQueue
     {
         try {
             $request = $this->data;
-            $res = WeatherData::updateOrCreate(['weather_id' => $request['weather_id']], $request);
-
+            $dattime = date('Y-m-d', strtotime($request['datetime']));
+            //$res = WeatherData::updateOrCreate(['weather_id' => $request['weather_id']], $request);
+            $res = WeatherData::where('weather_id',$request['weather_id'])
+                                ->whereDate('datetime',$dattime)
+                                ->first();
+            if( $res)
+            {
+                $res->fill($request);
+                $res->save();
+            }
+            else
+            {
+                $res = WeatherData::create($request);
+            }
             event (new WeatherDataProcessed($res));
 
         } catch (\Throwable $th) {

@@ -37,8 +37,8 @@ class CronController extends Controller
                         ),
                     true);
                     //add job to queue
-                    ProcessWeatherData::dispatch($result);
-                                 //->delay(now()->addMinutes(3));
+                    ProcessWeatherData::dispatch($result)
+                                 ->delay(now()->addMinutes(1));
 
                 }else{
                     Log::channel('weather')->error($data['message']);
